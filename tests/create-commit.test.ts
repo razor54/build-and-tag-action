@@ -38,7 +38,7 @@ describe('create-commit', () => {
   })
 
   it('creates the tree and commit with additional files', async () => {
-    process.env.INPUT_ADDITIONAL_FILES="package.json,additional.js"
+    process.env.INPUT_ADDITIONAL_FILES = "package.json,additional.js"
 
     await createCommit(tools)
     expect(nock.isDone()).toBe(true)
@@ -56,7 +56,35 @@ describe('create-commit', () => {
     expect(commitParams.message).toBe('Automatic compilation')
     expect(commitParams.parents).toEqual([tools.context.sha])
 
-    delete process.env.INPUT_ADDITIONAL_FILES;
+    delete process.env.INPUT_ADDITIONAL_FILES
+  })
+
+  it('creates the tree and commit with additional files ignoring action.yml', async () => {
+    process.env.INPUT_ADDITIONAL_FILES = "additional.js"
+    process.env.INPUT_JS_PACKAGE = "true"
+
+    await createCommit(tools)
+    expect(nock.isDone()).toBe(true)
+
+    // Test that our tree was created correctly
+    expect(treeParams.tree).toHaveLength(3)
+    expect(treeParams.tree.some((obj: any) => obj.path === 'package.json')).toBe(
+      true
+    )
+    expect(treeParams.tree.some((obj: any) => obj.path === 'additional.js')).toBe(
+      true
+    )
+
+    expect(treeParams.tree.some((obj: any) => obj.path === 'action.yml')).toBe(
+      false
+    )
+
+    // Test that our commit was created correctly
+    expect(commitParams.message).toBe('Automatic compilation')
+    expect(commitParams.parents).toEqual([tools.context.sha])
+
+    delete process.env.INPUT_ADDITIONAL_FILES
+    delete process.env.INPUT_JS_PACKAGE
   })
 
   it('creates the tree and commit', async () => {

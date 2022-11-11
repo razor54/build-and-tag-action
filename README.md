@@ -83,6 +83,20 @@ If you need to include more than just `main` in your built commit, you can provi
     additional_files: 'index.cache.js,another.js'
 ```
 
+**js_package**
+
+If you want to exlude `action.yml` and instead include `package.json` and `additional_files` set this variable to 'true'. The `package.json` file will be added and committed when the tag is updated:
+
+```yaml
+- uses: fictional/releaser@v1 # Not a real action!
+  id: releaser
+- uses: JasonEtco/build-and-tag-action@v1
+  with:
+    additional_files: 'index.cache.js,another.js'
+    js_package: 'true'
+```
+
+
 ## Motivation
 
 The [guide to JavaScript Actions](https://help.github.com/en/actions/building-actions/creating-a-javascript-action) recommends including `node_modules` in your repository, and manual steps to [following the versioning recommendations](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md#versioning). There are anti-patterns there that just don't sit right with me; so we can enable the same workflow, automatically!

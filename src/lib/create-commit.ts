@@ -18,12 +18,14 @@ export default async function createCommit(tools: Toolkit) {
   }
 
   tools.log.info('Creating tree')
+  const mainFile = tools.inputs.js_package == 'true' ? 'package.json' : 'action.yml'
+
   let files: GitCreateTreeParamsTree[] = [
     {
-      path: 'action.yml',
+      path: mainFile,
       mode: '100644',
       type: 'blob',
-      content: await readFile(tools.workspace, 'action.yml')
+      content: await readFile(tools.workspace, mainFile)
     },
     {
       path: main,
